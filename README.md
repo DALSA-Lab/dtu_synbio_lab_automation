@@ -14,6 +14,7 @@ This repository is the working home for lab automation code that is clear enough
 | `unit_operations/` | Reusable liquid-handling and workflow building blocks. |
 | `workflows/` | Workflow descriptions mapped to DBTL stages. |
 | `guides/robots/` | Robot setup, calibration, run, and troubleshooting guides. |
+| `guides/workflows/` | Literate programming, workflow authoring, and experiment planning guides. |
 | `labware/` | Custom or validated labware definitions. |
 | `data/raw/` | Original input data. |
 | `data/interim/` | Intermediate working data. |
@@ -81,6 +82,17 @@ Opentrons protocols should be documented at the **workflow level** and implement
 | Instrument handoff | Thermocycler, incubator, shaker, plate reader, centrifuge. |
 | Data workflows | Plate map joins, QC, run metadata, downstream exports. |
 
+## Protocol Library Examples
+
+Curated examples from the [Opentrons Protocol Library](https://library.opentrons.com/) live in `protocols/opentrons/library_examples/`. These are reference protocols, not yet in-house validated DTU protocols.
+
+| Protocol | Robot | Stage | Why it is useful |
+| --- | --- | --- | --- |
+| [E. coli Transformation and Recovery](protocols/opentrons/library_examples/ecoli-transformation-recovery/README.md) | OT-2 | Build | Transformation workflow with clear manual pauses and temperature control. |
+| [Colony PCR Preparation](protocols/opentrons/library_examples/colony-pcr-prep/README.md) | OT-2 | Test | Readable PCR setup example for screening transformed colonies. |
+| [Customizable Serial Dilution for OT-2](protocols/opentrons/library_examples/customizable_serial_dilution_ot2/README.md) | OT-2 | Test | Foundational dilution workflow for assays, standard curves, and titrations. |
+| [Automated Agar Plate Method for Viable Bacteria Assessment](protocols/opentrons/library_examples/agar_plate_method_bacteria/README.md) | Flex | Test | Viable-count workflow combining dilution, spotting, and incubation handoff. |
+
 ## Workflows and Unit Operations
 
 Suggested workflow ID:
@@ -146,12 +158,24 @@ Robot-specific guides live in `guides/robots/` and should cover:
 - Run monitoring and cleanup.
 - Known failures and troubleshooting.
 
-Suggested guides:
+Current guides:
 
-- `guides/robots/opentrons-ot2.md`
-- `guides/robots/opentrons-flex.md`
-- `guides/robots/plate-reader.md`
-- `guides/robots/thermocycler.md`
+- [Getting Started with Opentrons OT-2](guides/robots/00_How_to_start_with_Opentrons.ipynb)
+- [Building your first Opentrons protocol](guides/robots/01_Building_your_first_protocol.ipynb)
+- [Opentrons Flex guide](guides/robots/02_Opentrons_Flex_Guide.ipynb)
+- [Plate reader guide](guides/robots/03_Plate_Reader_Guide.ipynb)
+- [Thermocycler guide](guides/robots/04_Thermocycler_Guide.ipynb)
+
+## Workflow Guides
+
+Workflow guides live in `guides/workflows/` and describe how to design, document, and maintain reusable automation workflows.
+
+Current guides:
+
+- [How to write a literate programming protocol](guides/workflows/02_How_to_write_a_literate_programming_protocol.ipynb)
+- [Workflow authoring guide](guides/workflows/03_Workflow_Authoring_Guide.ipynb)
+- [Unit operation authoring guide](guides/workflows/04_Unit_Operation_Authoring_Guide.ipynb)
+- [Experiment bootstrapping guide](guides/workflows/05_Experiment_Bootstrapping_Guide.ipynb)
 
 ## Repository Structure
 
