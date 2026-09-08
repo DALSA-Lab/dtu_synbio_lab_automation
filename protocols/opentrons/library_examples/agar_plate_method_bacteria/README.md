@@ -2,6 +2,8 @@
 
 Source: [Opentrons Protocol Library](https://library.opentrons.com/p/agar_plate_method_bacteria)
 
+Downloaded script: [`BacteriaInoculation_Flex_6plates.py`](BacteriaInoculation_Flex_6plates.py)
+
 ## Why This Is Useful
 
 Viable-count workflows are directly relevant to bacterial strain characterization, culture QC, and growth-condition screening. This protocol is a more advanced example than a simple dilution, but still maps clearly to everyday microbiology operations.

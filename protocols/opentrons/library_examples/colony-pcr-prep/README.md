@@ -2,6 +2,8 @@
 
 Source: [Opentrons Protocol Library](https://library.opentrons.com/p/colony-pcr-prep)
 
+Downloaded script: [`Colony_PCR_prep.py`](Colony_PCR_prep.py)
+
 ## Why This Is Useful
 
 Colony PCR is a common test-stage screen after bacterial or fungal transformation. This protocol is short, educational, and helpful as a first example of automating PCR reaction preparation.

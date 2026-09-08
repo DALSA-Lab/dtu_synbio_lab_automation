@@ -2,6 +2,8 @@
 
 Source: [Opentrons Protocol Library](https://library.opentrons.com/p/ecoli-transformation-recovery)
 
+Downloaded script: [`LM10_Ecoli_transformation_recovery_v2.py`](LM10_Ecoli_transformation_recovery_v2.py)
+
 ## Why This Is Useful
 
 Transformation links DNA assembly to living bacterial strains. This is a readable example of a semi-automated workflow where the robot handles liquid transfers while timed manual interventions remain explicit.

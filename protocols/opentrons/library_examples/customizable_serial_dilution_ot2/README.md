@@ -2,6 +2,8 @@
 
 Source: [Opentrons Protocol Library](https://library.opentrons.com/p/customizable_serial_dilution_ot2)
 
+Downloaded script: [`customizable_serial_dilution_ot2.py`](customizable_serial_dilution_ot2.py)
+
 ## Why This Is Useful
 
 Serial dilution is one of the cleanest starter workflows for automation. It appears in growth assays, standard curves, antimicrobial testing, viable-count workflows, inducer titration, and concentration-response experiments.
