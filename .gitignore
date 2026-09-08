@@ -1,0 +1,25 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Opentrons and local run outputs
+data/simulation_outputs/*
+!data/simulation_outputs/.gitkeep
+*.log
+
+# Environment and credentials
+.env
+.env.*
+
+# OS/editor files
+.DS_Store
+.vscode/settings.json

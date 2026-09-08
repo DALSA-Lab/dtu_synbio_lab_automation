@@ -1,19 +1,23 @@
 import sys
 
-MINIMUM_PYTHON = (3, 9)
+import dtu_synbio_lab_automation
+
+MINIMUM_PYTHON = (3, 10)
 
 
-def main():
+def main() -> None:
     current_version = sys.version_info[:2]
     if current_version < MINIMUM_PYTHON:
         raise TypeError(
-            "This project requires Python {}.{}. Found: Python {}".format(
-                MINIMUM_PYTHON[0], MINIMUM_PYTHON[1], sys.version
-            )
+            f"This project requires Python {MINIMUM_PYTHON[0]}.{MINIMUM_PYTHON[1]}. "
+            f"Found: Python {sys.version}"
         )
 
-    print(">>> Development environment passes all tests!")
+    print(
+        ">>> DTU Synbio Lab Automation environment OK "
+        f"(package {dtu_synbio_lab_automation.__version__})"
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
