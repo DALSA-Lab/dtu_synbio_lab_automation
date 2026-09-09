@@ -15,6 +15,7 @@ This repository is the working home for lab automation code that is clear enough
 | `workflows/` | Workflow descriptions mapped to DBTL stages. |
 | `guides/robots/` | Robot setup, calibration, run, and troubleshooting guides. |
 | `guides/workflows/` | Literate programming, workflow authoring, and experiment planning guides. |
+| `llm_guidelines/` | Guidance for using LLMs to write safer, simpler Opentrons protocols. |
 | `labware/` | Custom or validated labware definitions. |
 | `data/raw/` | Original input data. |
 | `data/interim/` | Intermediate working data. |
@@ -24,6 +25,10 @@ This repository is the working home for lab automation code that is clear enough
 | `src/` | Python helpers for data handling, protocol generation, validation, and analysis. |
 | `docs/` | Longer documentation built with Sphinx or similar tooling. |
 | `references/` | Figures, papers, diagrams, and supporting material. |
+
+## LLM Guidelines
+
+The [`llm_guidelines/`](llm_guidelines/opentrons_protocol_guidelines.md) guide is inspired by the Karpathy-style LLM coding guidelines collected in [andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills/tree/main), which focus on reducing common agent mistakes such as hidden assumptions, overcomplication, and unfocused edits. This repository adapts that idea for liquid handlers and new automation users: the aim is to help someone describe a workflow in a single prompt and still get protocol code that asks the right questions, uses runtime parameters, respects deck reality, and can be simulated before touching samples.
 
 ## Quickstart
 
