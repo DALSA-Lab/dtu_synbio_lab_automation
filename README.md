@@ -115,38 +115,163 @@ Core unit operations:
 
 `load_labware`, `transfer`, `distribute`, `consolidate`, `mix`, `serial_dilution`, `normalize`, `pause_handoff`, `incubate`, `export_metadata`
 
-## Clean Opentrons Code
+## Clean code (for Opentrons and beyond):
 
-Good automation code is explicit, readable, and hard to misuse.
+Clean code is code that makes intent obvious. In a liquid handler protocol, that means a scientist can understand the experiment and an automation developer can understand the robot behavior.
 
-- Write around biological intent, not only robot commands.
-- Separate deck setup, input parsing, calculations, validation, and execution.
-- Use descriptive names for reagents, labware, wells, and workflow steps.
-- Keep volumes, labware names, module names, and flow-rate assumptions visible.
-- Validate inputs before moving liquid.
-- Make tip use, dead volume, mix volume, and manual pauses intentional.
+Borrowing from the core principles of *Clean Code: A Handbook of Agile Software Craftsmanship* by Robert C. Martin, Opentrons protocols should favor meaningful names, small units of responsibility, clear boundaries, minimal surprise, and fast feedback. In practice:
+
+- Use meaningful names: prefer `overnight_cultures`, `dilution_plate`, and `induction_media` over `plate1`, `plate2`, or `reagent`.
+- Make each section do one thing: metadata, runtime parameters, deck setup, validation, and execution should be easy to find.
+- Keep functions honest: a helper like `calculate_dilution_volumes()` is useful. A one-line wrapper around `pipette.transfer()` usually just hides the protocol.
+- Prefer CSV data plus loops for repeated robot actions: plate maps, transfer tables, and sample lists are easier to review as structured files than copy-pasted commands.
+- Avoid magic numbers: operator choices should be runtime parameters. True invariants should have clear names.
+- Fail early: validate sample count, wells, volumes, labware, and pipette capacity before liquid moves.
+- Let comments explain intent or risk, not obvious Python.
+- Keep side effects visible: tip changes, mixing, pauses, delays, module temperatures, and manual handoffs should be deliberate.
 - Simulate before running on real samples.
 
-Recommended protocol shape:
+Use [Opentrons runtime parameters](https://docs.opentrons.com/python-api/runtime-parameters/) for values the operator should choose during run setup: sample count, transfer volume, dilution factor, mix repetitions, protocol mode, or a CSV plate map. Use constants only for values that are not choices for a normal run, such as fixed deck slots, labware load names, API level, or validated lab-specific safety limits.
+
+For small protocols, start with the basics: parameters, deck setup, and a simple loop.
+
+Basic version:
 
 ```python
+# Import the Opentrons Protocol API.
+# This gives us the objects used to describe labware, pipettes, and robot actions.
 from opentrons import protocol_api
 
+# Metadata is shown in the Opentrons App.
+# Keep it short and focused on the biological workflow.
 metadata = {
-    "protocolName": "Example workflow",
+    "protocolName": "Example serial dilution setup",
     "author": "DTU Synbio Lab Automation",
-    "description": "Short workflow-level description.",
+    "description": "Prepare a simple dilution plate from overnight cultures.",
 }
 
+# Requirements tell Opentrons which robot and API version the protocol expects.
 requirements = {"robotType": "OT-2", "apiLevel": "2.20"}
 
 
+def add_parameters(parameters: protocol_api.ParameterContext) -> None:
+    # Runtime parameters change how the script works during run setup.
+    # Use them for values the operator should choose in the Opentrons App.
+    parameters.add_int(
+        variable_name="sample_count",
+        display_name="Sample count",
+        description="Number of samples to transfer.",
+        default=3,
+        minimum=1,
+        maximum=12,
+    )
+    parameters.add_float(
+        variable_name="transfer_volume_ul",
+        display_name="Transfer volume",
+        description="Volume moved from each sample.",
+        default=50,
+        minimum=5,
+        maximum=200,
+        unit="uL",
+    )
+
+
 def run(protocol: protocol_api.ProtocolContext) -> None:
-    deck = load_deck(protocol)
-    plan = build_liquid_handling_plan()
-    validate_plan(plan, deck)
-    execute_plan(protocol, deck, plan)
+    # Load the physical deck layout.
+    # A reader should be able to match this block to the robot deck.
+    tiprack = protocol.load_labware("opentrons_96_tiprack_300ul", 1)
+    source_plate = protocol.load_labware("nest_96_wellplate_200ul_flat", 2)
+    dilution_plate = protocol.load_labware("nest_96_wellplate_200ul_flat", 3)
+    pipette = protocol.load_instrument("p300_single_gen2", "right", tip_racks=[tiprack])
+
+    # Turn the selected sample count into wells.
+    # This keeps repeated work as data instead of copy-pasted transfers.
+    source_wells = source_plate.wells()[: protocol.params.sample_count]
+    destination_wells = dilution_plate.wells()[: protocol.params.sample_count]
+
+    # Execute the liquid-handling plan.
+    # A simple loop is clearer than many repeated transfer commands.
+    for source, destination in zip(source_wells, destination_wells):
+        pipette.transfer(
+            protocol.params.transfer_volume_ul,
+            source,
+            destination,
+            new_tip="always",
+        )
 ```
+
+Expanded version:
+
+Add validation, run-log comments, and controlled mixing only when they make the protocol safer or easier to run.
+
+```python
+def add_parameters(parameters: protocol_api.ParameterContext) -> None:
+    # Keep the same operator-facing parameters from the basic version.
+    parameters.add_int(
+        variable_name="sample_count",
+        display_name="Sample count",
+        description="Number of samples to transfer.",
+        default=3,
+        minimum=1,
+        maximum=12,
+    )
+    parameters.add_float(
+        variable_name="transfer_volume_ul",
+        display_name="Transfer volume",
+        description="Volume moved from each sample.",
+        default=50,
+        minimum=5,
+        maximum=200,
+        unit="uL",
+    )
+    parameters.add_int(
+        variable_name="mix_repetitions",
+        display_name="Mix repetitions",
+        description="Number of mixes after each transfer.",
+        default=3,
+        minimum=0,
+        maximum=10,
+    )
+
+
+def run(protocol: protocol_api.ProtocolContext) -> None:
+    # Keep deck setup explicit and easy to compare with the robot deck.
+    tiprack = protocol.load_labware("opentrons_96_tiprack_300ul", 1)
+    source_plate = protocol.load_labware("nest_96_wellplate_200ul_flat", 2)
+    dilution_plate = protocol.load_labware("nest_96_wellplate_200ul_flat", 3)
+    pipette = protocol.load_instrument("p300_single_gen2", "right", tip_racks=[tiprack])
+
+    # Validate risky assumptions before moving liquid.
+    if protocol.params.transfer_volume_ul > pipette.max_volume:
+        raise ValueError("Transfer volume exceeds pipette capacity.")
+
+    # Build the transfer plan from runtime parameters.
+    source_wells = source_plate.wells()[: protocol.params.sample_count]
+    destination_wells = dilution_plate.wells()[: protocol.params.sample_count]
+
+    for source, destination in zip(source_wells, destination_wells):
+        # Comments appear in the run log.
+        # Use them to make the biological step visible to the operator.
+        protocol.comment(
+            f"Transfer {protocol.params.transfer_volume_ul} uL from {source.well_name} "
+            f"to {destination.well_name}."
+        )
+
+        # Mixing and tip use are part of the method.
+        # Keep them explicit.
+        pipette.transfer(
+            protocol.params.transfer_volume_ul,
+            source,
+            destination,
+            mix_after=(
+                protocol.params.mix_repetitions,
+                min(protocol.params.transfer_volume_ul, 120),
+            ),
+            new_tip="always",
+        )
+```
+
+Use helper functions when the protocol becomes hard to scan, for example when parsing a CSV plate map, calculating serial dilutions, validating many runtime parameters, or sharing the same deck setup across multiple protocols. The goal is not "more functions". The goal is code where the workflow reads like the experiment it performs.
 
 ## Robot Guides
 
@@ -209,6 +334,8 @@ Current guides:
 
 Before running a protocol on real samples, confirm the deck layout, labware definitions, reagent identities, volumes, pipette compatibility, module settings, and simulation result. New or modified workflows should be reviewed by both an automation developer and a trained lab operator.
 
-## Citation
+## References
 
 Kim, H., Hillson, N.J., Cho, B.-K. et al. **Abstraction hierarchy to define biofoundry workflows and operations for interoperable synthetic biology research and applications.** *Nature Communications* 16, 6056 (2025). <https://doi.org/10.1038/s41467-025-61263-6>
+
+Martin, R.C. **Clean Code: A Handbook of Agile Software Craftsmanship.** Prentice Hall, 2008.
