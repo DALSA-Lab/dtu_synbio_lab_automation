@@ -16,7 +16,8 @@ This repository is the working home for lab automation code that is clear enough
 | `guides/robots/` | Robot setup, calibration, run, and troubleshooting guides. |
 | `guides/workflows/` | Literate programming, workflow authoring, and experiment planning guides. |
 | `llm_guidelines/` | Guidance for using LLMs to write safer, simpler Opentrons protocols. |
-| `labware/` | Custom or validated labware definitions. |
+| `labware/` | Custom or validated labware definitions. See the [Opentrons Labware Library](https://labware.opentrons.com/) for official definitions. |
+| Opentrons API docs | Official API and robot documentation: <https://docs.opentrons.com/> |
 | `data/raw/` | Original input data. |
 | `data/interim/` | Intermediate working data. |
 | `data/processed/` | Cleaned or analysis-ready data. |
