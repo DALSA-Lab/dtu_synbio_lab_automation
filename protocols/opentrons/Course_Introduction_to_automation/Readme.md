@@ -2,6 +2,7 @@
 # Introduction to Automation
 
 This folder contains small Opentrons examples used to introduce core concepts in laboratory automation. The examples progress from a fixed protocol, through single- and multichannel pipetting, to reusable protocols that accept runtime parameters and CSV input.
+For teaching, write askung@dtu.dk. I have presentations for learning this but I am awaiting if this material is open source or not currently. 
 
 ## Learning path
 
