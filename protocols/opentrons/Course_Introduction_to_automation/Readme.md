@@ -52,7 +52,7 @@ The first column is the source well, the second is the destination well, and the
 - Confirm pipette type, deck slots, labware, tip strategy, liquid properties, and source volumes against the actual run before using samples.
 
 ## Simulation
-
+If possible: 
 Install the repository dependencies from the project root, then simulate a protocol before loading it on a robot:
 
 ```powershell
@@ -62,12 +62,15 @@ uv run opentrons_simulate protocols/opentrons/Course_Introduction_to_automation/
 
 Replace the filename to simulate another example. Parameterized protocols require the corresponding CSV file and runtime parameters to be supplied through the Opentrons App or an equivalent execution workflow; simulation alone does not replace checking those inputs.
 
+If this doesnt work, the newest OT2 software can actually simulate from the app: 
+https://opentrons.com/app
+
 ## Suggested exercises
 
 - Change the number of wells or columns processed in the D1 examples.
 - Compare the number of pipetting actions and tips used by the single- and multichannel versions.
 - Tune the liquid classes in the D2 examples and compare the resulting liquid-handling behavior.
-- Extend the D4S1 protocols with input validation for well names, transfer volumes, plate count, and pipette capacity.
+- Extend the D4S1 protocols with alternative inputs and play around with the parameters
 - Keep the CSV format stable and document any new columns before adding them to a protocol.
 
 These are teaching examples, not validated production protocols. Simulate them, inspect the generated commands, and verify the deck setup and liquid-handling assumptions before a real run.
